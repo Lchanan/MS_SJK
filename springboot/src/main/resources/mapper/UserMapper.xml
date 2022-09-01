@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springboot.mapper.UserMapper">
+ 
+    <!-- 通用查询结果 -->
+    <sql id="tb_user_list">
+       id, no, pwd, name, create_time, update_time
+    </sql>
+    
+        
+    <!-- 动态插入 -->
+    <insert id="add" parameterType="map">
+       INSERT INTO tb_user (
+       <trim suffixOverrides=",">
+           <if test='id != null '>id,</if>
+           <if test='no != null '>no,</if>
+           <if test='pwd != null '>pwd,</if>
+           <if test='name != null '>name,</if>
+           <if test='create_time != null '>create_time,</if>
+           <if test='update_time != null '>update_time,</if>
+       </trim>
+       ) VALUES (
+       <trim suffixOverrides=",">
+           <if test='id != null '>#{id},</if>
+           <if test='no != null '>#{no},</if>
+           <if test='pwd != null '>#{pwd},</if>
+           <if test='name != null '>#{name},</if>
+           <if test='create_time != null '>#{create_time},</if>
+           <if test='update_time != null '>#{update_time},</if>
+       </trim>
+       )
+    </insert>
+	
+	<!-- 批量插入 -->
+    <insert id="addList">
+       INSERT INTO tb_user (id, no, pwd, name, create_time, update_time)
+	   VALUES <foreach collection="list" item="item" separator=",">(#{item.id},#{item.no},#{item.pwd},#{item.name},#{item.create_time},#{item.update_time})</foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+       DELETE FROM tb_user WHERE id = #{id}
+    </delete>
+    
+ 	<update id="update" parameterType="map">
+       UPDATE tb_user
+       <set>
+		  <if test='no != null and no != ""'>no = #{no},</if>
+		  <if test='pwd != null and pwd != ""'>pwd = #{pwd},</if>
+		  <if test='name != null and name != ""'>name = #{name},</if>
+		  <if test='update_time != null'>update_time = #{update_time},</if>
+       </set>
+       WHERE id = #{id}
+    </update>
+    
+	<select id="queryList" parameterType="map" resultType="map">
+	   		select * from tb_user
+	   		<where>
+					<if test='no != null and no != ""'>and no = #{no}</if>
+					<if test='pwd != null and pwd != ""'>and pwd = #{pwd}</if>
+					<if test='name != null and name != ""'>and name = #{name}</if>
+					<if test='create_time != null and create_time != ""'>and create_time = #{create_time}</if>
+					<if test='update_time != null and update_time != ""'>and update_time = #{update_time}</if>
+	   		</where>
+	   		order by id desc 
+	   		limit #{page},#{limit}
+	  </select>
+	  
+	  <select id="queryCount" parameterType="map" resultType="int">
+	   		select count(*) from tb_user
+	   		<where>
+					<if test='no != null and no != ""'>and no = #{no}</if>
+					<if test='pwd != null and pwd != ""'>and pwd = #{pwd}</if>
+					<if test='name != null and name != ""'>and name = #{name}</if>
+					<if test='create_time != null and create_time != ""'>and create_time = #{create_time}</if>
+					<if test='update_time != null and update_time != ""'>and update_time = #{update_time}</if>
+	   		</where>
+	  </select>
+	  
+	  <select id="queryDetail" parameterType="string" resultType="map">
+	   		select * from tb_user where
+	   		id = #{id}
+	  </select>
+
+</mapper>
